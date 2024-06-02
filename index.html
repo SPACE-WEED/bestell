@@ -6,117 +6,192 @@
     <title>SPACE SUGGER Bestellkarte</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nasai+One&display=swap');
-        body { font-family: Arial, sans-serif; background-color: #0b3d91; color: #fff; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        body { font-family: Arial, sans-serif; background-color: #0b3d91; color: #fff; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .container { background: #1c1c1c; padding: 20px; border-radius: 8px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); max-width: 600px; width: 100%; text-align: center; margin: 20px; }
         h1 { font-family: 'Nasai One', sans-serif; color: #ffcc00; margin-bottom: 20px; }
+        .tabs { display: flex; justify-content: space-around; margin-bottom: 20px; }
+        .tab { cursor: pointer; padding: 10px 20px; background: #333; border-radius: 8px; }
+        .tab.active { background: #ffcc00; color: #000; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .subcategory { margin-bottom: 20px; text-align: left; }
+        .subcategory h3 { color: #ffcc00; }
         .product { margin-bottom: 20px; }
         .product label { display: block; margin-bottom: 5px; color: #ffcc00; }
-        .dose-size label { display: inline-block; margin-right: 10px; color: #fff; }
-        .address, .payment-method { margin-top: 20px; }
-        .address label, .payment-method label { display: block; margin-bottom: 5px; color: #ffcc00; }
+        .dose-size { display: flex; justify-content: center; margin-top: 10px; }
+        .dose-size button { background: #333; color: #fff; border: none; padding: 5px 10px; margin: 0 5px; cursor: pointer; border-radius: 4px; }
+        .dose-size button.active { background: #ffcc00; color: #000; }
+        .dose-size button.disabled { background: #555; color: #999; cursor: not-allowed; }
+        .address, .payment-method, .cart-section { margin-top: 20px; }
+        .address label, .payment-method label, .cart-section label { display: block; margin-bottom: 5px; color: #ffcc00; }
         textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
         select, input[type="number"] { padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: calc(100% - 22px); margin-bottom: 10px; }
         button { background: #ffcc00; color: #000; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; transition: background 0.3s ease; margin-top: 20px; }
         button:hover { background: #e6b800; }
         p { margin-top: 20px; font-weight: bold; }
-        .copy-code { background: #333; padding: 10px; border-radius: 4px; margin-top: 10px; cursor: pointer; user-select: all; }
-        .product-section { margin-top: 30px; }
+        .copy-code { background: #333; padding: 10px; border-radius: 4px; margin-top: 10px; cursor: pointer; user-select: all; word-break: break-all; }
+        .cart-item { margin-bottom: 10px; }
+        .cart-item button { margin-left: 10px; background: #e74c3c; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>SPACE SUGGER Bestellkarte</h1>
-        <form id="orderForm">
-            <div class="product-section">
-                <h2>Sugger-Produkte</h2>
-                <div class="product">
-                    <label>Blue Sky 20mg (2,50€/g)
-                        <div class="dose-size">
-                            <label>3g Dose: <input type="number" name="Blue Sky 3g" value="0" min="0" data-price="7.50"></label>
-                            <label>5g Dose: <input type="number" name="Blue Sky 5g" value="0" min="0" data-price="12.50"></label>
-                            <label>50g Dose (-15%): <input type="number" name="Blue Sky 50g" value="0" min="0" data-price="106.25"></label>
-                        </div>
-                    </label>
+        <div class="tabs">
+            <div class="tab active" data-tab="edibles">Edibles</div>
+            <div class="tab" data-tab="blueten">Blüten</div>
+            <div class="tab" data-tab="hash">Hash</div>
+            <div class="tab" data-tab="cart">Einkaufswagen</div>
+        </div>
+        <div class="tab-content active" id="edibles">
+            <h2>Edibles-Produkte</h2>
+            <div class="subcategory">
+                <h3>Zucker</h3>
+                <div class="product" data-product="Blue Sky 20mg">
+                    <label>Blue Sky 20mg/1g (2,50€/g)</label>
+                    <div class="dose-size">
+                        <button type="button" class="dose-button active" data-size="3g" data-price="7.50">3g</button>
+                        <button type="button" class="dose-button" data-size="5g" data-price="12.50">5g</button>
+                        <button type="button" class="dose-button" data-size="50g" data-price="118.75">50g (-5%)</button>
+                    </div>
+                    <label>Anzahl: <input type="number" name="Blue Sky 20mg" value="0" min="0"></label>
+                    <button type="button" onclick="addToCart('Blue Sky 20mg', getActivePrice('Blue Sky 20mg'))">In den Einkaufswagen</button>
                 </div>
-                <div class="product">
-                    <label>Mars Dust 25mg (3€/g)
-                        <div class="dose-size">
-                            <label>3g Dose: <input type="number" name="Mars Dust 3g" value="0" min="0" data-price="9.00"></label>
-                            <label>5g Dose: <input type="number" name="Mars Dust 5g" value="0" min="0" data-price="15.00"></label>
-                            <label>50g Dose (-15%): <input type="number" name="Mars Dust 50g" value="0" min="0" data-price="127.50"></label>
-                        </div>
-                    </label>
+                <div class="product" data-product="Mars Dust 25mg">
+                    <label>Mars Dust 25mg/1g (3€/g) - <span style="color: red;">Ausverkauft</span></label>
+                    <div class="dose-size">
+                        <button type="button" class="dose-button disabled" disabled>3g</button>
+                        <button type="button" class="dose-button disabled" disabled>5g</button>
+                        <button type="button" class="dose-button disabled" disabled>50g</button>
+                    </div>
                 </div>
-                <div class="product">
-                    <label>Black Hole 40mg (4€/g)
-                        <div class="dose-size">
-                            <label>3g Dose: <input type="number" name="Black Hole 3g" value="0" min="0" data-price="12.00"></label>
-                            <label>5g Dose: <input type="number" name="Black Hole 5g" value="0" min="0" data-price="20.00"></label>
-                            <label>50g Dose (-15%): <input type="number" name="Black Hole 50g" value="0" min="0" data-price="170.00"></label>
-                        </div>
-                    </label>
-                </div>
-            </div>
-            <div class="product-section">
-                <h2>Blüten-Produkte</h2>
-                <div class="product">
-                    <label>RS#11 Blüten (40€/3,5g, 11,43€/g)
-                        <div class="dose-size">
-                            <label>3,5g Glas: <input type="number" name="RS#11 Blüten 3,5g" value="0" min="0" data-price="40.00"></label>
-                            <label>Unze (-15%): <input type="number" name="RS#11 Blüten Unze" value="0" min="0" data-price="291.20"></label>
-                        </div>
-                    </label>
+                <div class="product" data-product="Black Hole 40mg">
+                    <label>Black Hole 40mg/1g (4€/g) - <span style="color: red;">Ausverkauft</span></label>
+                    <div class="dose-size">
+                        <button type="button" class="dose-button disabled" disabled>3g</button>
+                        <button type="button" class="dose-button disabled" disabled>5g</button>
+                        <button type="button" class="dose-button disabled" disabled>50g</button>
+                    </div>
                 </div>
             </div>
-            <div class="address">
+        </div>
+        <div class="tab-content" id="blueten">
+            <h2>Blüten-Produkte</h2>
+            <div class="product" data-product="RS#11 Blüten">
+                <label>RS#11 Blüten (40€/3,5g, 11,43€/g)</label>
+                <div class="dose-size">
+                    <button type="button" class="dose-button active" data-size="3,5g" data-price="40.00">3,5g</button>
+                    <button type="button" class="dose-button" data-size="28g" data-price="303.02">28g (-5%)</button>
+                </div>
+                <label>Anzahl: <input type="number" name="RS#11 Blüten" value="0" min="0"></label>
+                <button type="button" onclick="addToCart('RS#11 Blüten', getActivePrice('RS#11 Blüten'))">In den Einkaufswagen</button>
+            </div>
+        </div>
+        <div class="tab-content" id="hash">
+            <h2>Hash-Produkte</h2>
+            <p>Bald verfügbar</p>
+        </div>
+        <div class="tab-content" id="cart">
+            <h2>Einkaufswagen</h2>
+            <div id="cartItems"></div>
+            <div class="cart-section">
                 <label for="address">Postanschrift:</label>
                 <textarea id="address" name="address" rows="4" cols="50"></textarea>
             </div>
             <div class="payment-method">
                 <label>Zahlungsmethode:</label>
-                <select id="payment" name="payment" onchange="calculateTotal()">
-                    <option value="Bitcoin">Bitcoin (-5%)</option>
+                <select id="payment" name="payment">
+                    <option value="Bitcoin">Bitcoin</option>
                     <option value="PayPal">PayPal</option>
                 </select>
             </div>
-            <button type="button" onclick="calculateTotal()">Gesamtpreis berechnen</button>
-        </form>
-        <p id="totalPrice">Gesamtpreis: 0 €</p>
-        <p id="orderCode">Bestellcode: <span class="copy-code" id="copyCode">Noch nicht generiert</span></p>
-        <button type="button" onclick="generateOrderCode()">Bestellcode generieren</button>
+            <button type="button" onclick="generateOrderCode()">Bestellcode generieren</button>
+            <p id="totalPrice">Gesamtpreis: 0 €</p>
+            <p id="orderCode">Bestellcode: <span class="copy-code" id="copyCode">Noch nicht generiert</span></p>
+        </div>
     </div>
     
     <script>
-        function calculateTotal() {
-            let total = 0;
-            const form = document.getElementById('orderForm');
-            const inputs = form.querySelectorAll('input[type="number"]');
-            inputs.forEach(input => {
-                const price = parseFloat(input.getAttribute('data-price'));
-                const quantity = parseInt(input.value, 10);
-                if (!isNaN(price) && !isNaN(quantity)) {
-                    total += price * quantity;
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const cart = [];
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === tab.getAttribute('data-tab')) {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        document.querySelectorAll('.dose-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const productDiv = button.closest('.product');
+                productDiv.querySelectorAll('.dose-button').forEach(btn => btn.classList.remove('active'));
+                if (!button.classList.contains('disabled')) {
+                    button.classList.add('active');
                 }
             });
-            const paymentMethod = document.getElementById('payment').value;
-            if (paymentMethod === 'Bitcoin') {
-                total *= 0.95;  // 5% Rabatt bei Bitcoin-Zahlung
+        });
+
+        function getActivePrice(productName) {
+            const productDiv = document.querySelector(`[data-product="${productName}"]`);
+            const activeButton = productDiv.querySelector('.dose-button.active');
+            return parseFloat(activeButton.getAttribute('data-price'));
+        }
+
+        function getActiveSize(productName) {
+            const productDiv = document.querySelector(`[data-product="${productName}"]`);
+            const activeButton = productDiv.querySelector('.dose-button.active');
+            return activeButton.getAttribute('data-size');
+        }
+
+        function addToCart(product, price) {
+            const quantity = parseInt(document.querySelector(`input[name="${product}"]`).value, 10);
+            const size = getActiveSize(product);
+            if (quantity > 0) {
+                cart.push({ product, price, quantity, size });
+                updateCart();
             }
+        }
+
+        function updateCart() {
+            const cartItems = document.getElementById('cartItems');
+            cartItems.innerHTML = '';
+            let total = 0;
+
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                cartItems.innerHTML += `<div class="cart-item">${item.product} - ${item.quantity} Stück - ${item.size} - ${itemTotal.toFixed(2)} €
+                    <button type="button" onclick="removeFromCart('${item.product}', '${item.size}')">Entfernen</button></div>`;
+            });
+
             document.getElementById('totalPrice').innerText = `Gesamtpreis: ${total.toFixed(2)} €`;
-            return total.toFixed(2);
+        }
+
+        function removeFromCart(product, size) {
+            const index = cart.findIndex(item => item.product === product && item.size === size);
+            if (index > -1) {
+                cart.splice(index, 1);
+                updateCart();
+            }
         }
 
         function generateOrderCode() {
-            const form = document.getElementById('orderForm');
-            const inputs = form.querySelectorAll('input[type="number"]');
             const address = document.getElementById('address').value;
             const payment = document.getElementById('payment').value;
-            const totalPrice = calculateTotal();
-            let orderDetails = `Total:${totalPrice};`;
-            inputs.forEach(input => {
-                if (input.value > 0) {
-                    orderDetails += `${input.name}:${input.value};`;
-                }
+            let totalPrice = parseFloat(document.getElementById('totalPrice').innerText.replace('Gesamtpreis: ', '').replace(' €', ''));
+
+            let orderDetails = `Total:${totalPrice.toFixed(2)};`;
+            cart.forEach(item => {
+                orderDetails += `${item.product} (${item.size}):${item.quantity};`;
             });
             orderDetails += `Address:${address};Payment:${payment};`;
             const orderCode = btoa(orderDetails);
